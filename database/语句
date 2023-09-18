@@ -1,0 +1,304 @@
+show databases;
+use hzs;
+show tables;
+select * from sc;
+desc sc;
+desc student;
+desc course;
+insert into sc values('201215121','4',99);
+select * from sc;
+select * from student;
+select * from course;
+select * from student,course,sc where student.sno=sc.sno and course.cno=sc.cno;
+show databases;
+create database zs8787;
+show databases;
+use zs8787;
+show tables;
+desc student;
+drop database zs878;
+show databases;
+use sys;
+show tables;
+show databases;
+use hzs;
+show tables;
+desc course;
+alter table sc drop foreign key sc_ibfk_2;
+alter table sc add constraint sc_ibfk_1 foreign key(sno) references student(sno);
+alter table course drop primary key;
+alter table course add primary key(cno);
+alter table sc add constraint fk_cno foreign key(cno) references course(cno) on update cascade;
+alter table student add constraint uq_sname unique(name);
+alter table course add constraint ck_xf check(credit >0);
+alter table sc drop foreign key fk_cno;
+alter table sc drop foreign key sc_ibfk_1;
+alter table student drop primary key;
+alter table student drop index uq_sname;
+show databases;
+use hzs;
+show tables;
+create table test
+(
+    Sno char(4),
+    date_time varchar(50)
+);
+create trigger test_trig after insert on student for each row
+    insert into test(Sno,date_time) values(NEW.sno,SYSDATE());
+insert into student(sno,name,sex,age) values('2022','yyds','男',22);
+select * from test;
+drop trigger  if exists test_trig;
+select * from student;
+create trigger del_trig after delete  on course for each row
+    delete from sc where cno=OLD.cno;
+delete from course where cno='1';
+select * from sc;
+delimiter //
+create procedure stu_name(in sname char(20))
+begin
+    select max(grade) '最高分',min(grade) '最低分',avg(grade) '平均分' from student s,sc c
+    where s.sno=c.sno
+        and s.name=sname;
+end;//
+delimiter ;
+call stu_name('李勇');
+drop procedure if exists stu_name;
+insert into course values('1','概率论',-1);
+delimiter //
+create function calculate_sum()
+returns  int
+deterministic
+begin
+    declare ans int default 0;
+    declare i int default  1;
+    while i<=100 do
+        set ans=ans+i;
+        set i=i+1;
+    end while;
+    return ans;
+end //
+delimiter ;
+select calculate_sum() as _sum;
+delimiter //
+create function fact(i int)  returns varchar(10)
+deterministic
+begin
+    declare grade varchar(10);
+    if i>=90 then
+        set grade='A';
+    elseif i>=80 then
+        set grade='B';
+    elseif i>=70 then
+        set grade='C';
+    elseif i>=60 then
+        set grade='D';
+    else
+        set grade='E';
+    end if;
+    return grade;
+end //
+delimiter ;
+select sno as '学号',cno as '课程号',fact(grade) as '百分制成绩' from sc;
+show databases;
+use hzs;
+alter table student add constraint pri primary key (sno);
+alter table sc add constraint w1 foreign key (sno) references student(sno);
+alter table sc add constraint w2 foreign key (cno) references  course(cno);
+select s.sno,name,age,cno,grade from student s right outer join sc s2 on s.sno = s2.sno;
+show databases;
+use hzs;
+create schema tt;
+drop database test;
+drop schema test;
+create schema test
+create table t1
+(
+    col1 char(5) not null,
+    col2 smallint,
+    col3 int,
+    col4 numeric(10,3),
+    col5 decimal(5,2)
+);
+drop table t1;
+use test;
+create table STUDENT(
+    sno char(20) primary key ,
+    name char(20) unique ,
+    sex char(2),
+    age smallint,
+    dept char(20)
+);
+create table course(
+    cno char(10) primary key ,
+    cname char(20) not null,
+    cpno char(10),
+    credit smallint,
+    foreign key(cpno) references course(cno)
+);
+create table sc(
+    sno char(20),
+    cno char(10),
+    grade smallint,
+    primary key(sno,cno),
+    foreign key(sno) references student(sno),
+    foreign key(cno) references course(cno)
+);
+alter table student add column s_entrance date;
+alter table student alter column age int;
+alter table course add unique(cname);
+ALTER TABLE student MODIFY COLUMN age INT;
+create table ss(
+    sno char(20)
+);
+drop table ss;
+create unique index stu on student(sno asc);
+create unique index cou on course(cno asc);
+create unique index scc on sc(sno asc,cno desc);
+alter table student drop index stu;
+alter table sc drop index scc;
+alter table course drop index cou;
+alter table sc rename index scc  to sca;
+insert into student(sno,name,sex,age,dept) values('201215123','王敏','女',18,'MA');
+insert into student(sno,name,sex,age,dept) values('201215125','张立','男',19,'IS');
+alter table course drop foreign key  course_ibfk_1;
+select sno,name from student;
+select sno,name,dept from student;
+select * from student;
+select name,year(current_date())-age '出生日期' from student;
+select name,year(current_date())-age as '出生日期',lower(dept) as department from student;
+select distinct  sno from sc;
+select name from student where dept='CS';
+select name,age from student where age<20;
+select distinct sno from sc where grade<60;
+update sc
+set grade=55 where sno='202111104';
+select name,dept,age from student where age between 20 and 23;
+select name,dept,age from student where age not between 20 and 23;
+select name from student where dept in('CS','MA','IS');
+select name from student where dept not in ('CS','MA','IS');
+select * from student where sno like '201215121';
+select * from student where sno='201215121';
+select name,sno,sex from student where name like '刘%';
+select name from student where name like '欧阳_';
+select name,sno from student where name like '_阳%';
+select cno,credit from course where cname like 'DB/_Design' escape '/';
+select * from course where cname like 'DB/_%i__' escape '/';
+select sno,cno from sc where grade is null;
+select sno,cno from sc where grade is not null;
+select name from student where dept='CS' and age<=20;
+select * from student where dept='CS' or dept='MA' or dept='IS';
+select sno,grade from sc where cno='3' order by grade desc;
+select * from student order by dept asc,age desc;
+select count(*) from student;
+select count(distinct sno) from sc;
+select avg(grade) from sc where cno='1';
+select max(grade) from sc where cno='1';
+select sum(credit) from course,sc where course.cno=sc.cno and sno='201215122';
+select cno,count(*) from sc group by cno;
+select sno from sc group by sno having count(*)>=3;
+select sno,avg(grade) as '平均成绩' from sc group by sno having avg(grade)>90;
+select student.*,sc.*,course.* from student,course,sc where student.sno=sc.sno and course.cno=sc.cno;
+select * from student,sc where student.sno=sc.sno;
+select sc.sno,name,sex,age,dept,cno,grade from student,sc where student.sno=sc.sno;
+select sc.sno,name from student,sc where student.sno=sc.sno and cno='2' and grade>90;
+select c1.cno,c2.cpno from course c1,course c2 where c1.cpno=c2.cno;
+select student.sno,name,sex,age,dept,cno,grade from student left join sc on student.sno=sc.sno;
+select student.sno,name,cname,grade from student,course,sc where student.sno=sc.sno and course.cno=sc.cno;
+select name from student where sno in (select sno from sc where cno='2');
+select name from student,sc where student.sno=sc.sno and  cno='2';
+select * from student where dept in(select dept from student where name ='刘晨');
+select sc.sno,name from student,course,sc where student.sno=sc.sno and course.cno=sc.cno and cname='信息系统';
+select sno,name from student where sno in(select sno from sc where cno in(select cno from course where cname='信息系统'));
+select sno,cno from  sc x where grade>(select avg(grade) from sc y where y.sno=x.sno);
+select name,age from student where age<any(select age from student where dept='CS') and dept!='CS';
+select name,age from student where age<(select max(age) from student where dept='CS') and dept<>'CS';
+select name,age from student where age<all(select age from student where dept='CS') and dept<>'CS';
+select name from student,sc where student.sno=sc.sno and cno='2';
+select name from student where sno in(select sno from sc where cno='2');
+select name from student where exists(select * from sc where sno=student.sno and cno='2');
+select * from student where dept='CS' union  select * from student where age<=19;
+select * from sc where cno='1' union select * from sc where cno='2';
+select * from student where dept='CS' and age<=20;
+select sno from sc where cno='1' and sno in(select sno from sc where cno='2');
+select * from student where dept='CS' and age>19;
+create table new_table(
+    dept char(20) not null,
+    age smallint
+);
+insert into new_table(dept,age) select dept,avg(age) from student group by dept;
+select * from new_table;
+update student set age=22 where sno='201215121';
+update student set age=age+1;
+update  sc set grade=0 where sno in(select sno from student where dept='CS');
+delete from student where sno='202115121';
+delete from new_table where dept='CS';
+delete from sc where sno in(select sno from student where dept='CS');
+insert into sc(sno,cno) values('201215126','1');
+insert into student(sno,name,sex,age,dept) values('201215126','霸气','男',21,'CS');
+desc student;
+insert into student(sno,name,sex,age,dept) values('201215200','如会','女',22,'GC');
+update student set dept=null where sno='201215200';
+update course set cpno=null where cno='2';
+insert into sc(sno,cno,grade) values('201215122','2',98);
+select * from sc where cno='1' and grade<60;
+update sc set grade=null where sno='201215121' and cno='3';
+select * from sc where cno='1' and(grade<60 or grade is null);
+select * from sc where cno='1' and grade<60 union select * from sc where cno='1' and grade is null;
+# 视图是从一个或者几个基本表（视图）中导出的表，它与基本表不同，是一个虚表。数据库当中只存放视图的定义不存放视图对应的数据，
+# 这些数据仍然存放在原来的表当中。因此一旦基本表当中的数据发生改变，视图中的数据也就发生改变了。可以把视图理解为一个窗口，通过这个窗口
+# 可以看到数据库中自己感兴趣的数据及其变化。视图一经定义，就可以像其他基本表一样进行增 删 改操作，也可以在一个视图上面在定义一个视图
+# 但是对视图的增加删除修改操作会有一定的限制。
+create view information_student1 as
+    select sno as '学号',name '姓名',sex as '性别' from student where dept='CS' with check option;
+drop view information_student1;
+create view information_student2(sno,name,sex) as
+    select sc.sno as '学号',name as '姓名',sex as '性别' from student,sc where dept='CS' and cno='1' and student.sno=sc.sno;
+select * from information_student2;
+create view information_student3(sno,name,sex) as
+    select student.sno,name,sex from student,sc where student.sno=sc.sno and dept='CS' and cno='1' and grade>90;
+select  * from information_student3;
+create view birth_student(sno,name,birth)
+as select sno,name,year(current_date)-age from student;
+select * from birth_student;
+create view performance_student(sno,avg) as
+    select sno,avg(grade) from sc group by sno;
+select * from performance_student;
+create view woman_student(sno,name,sex,age,dept) as
+    select sno,name,sex,age,dept from student where sex='女';
+select * from woman_student;
+select * from woman_student where age>23;
+select  woman_student.sno,name,cno,grade from woman_student,sc where woman_student.sno=sc.sno and cno='2';
+select * from  performance_student where avg>90;
+desc performance_student;
+drop view performance_student;
+select sno,avg(grade) from sc group by sno having avg(grade)>90;
+select * from (select sno,avg(grade) from sc group by sno) as per_sut(sno,avg) where avg>90;
+update information_student1 set 姓名='刘参' where 学号='201215122';
+insert into student(sno,name,sex,age,dept) values('201215129','赵信','男',28,'CS');
+insert into information_student1 values('20115130','赵是','男');
+delete from information_student1 where 学号='201215129';
+update information_student2 set name='欧阳锋' where sno='201215121';
+insert into student(sno,name,sex,age,dept) values('20115143','大师','男',20,'CS');
+insert into information_student1 values('324242','打啊','男');
+create view information_student11 as
+    select sno,name,sex from student where dept='CS';
+insert into information_student11 values('332242','大大','女');
+drop view information_student11;
+select  sno,cno from sc x where grade=(select max(grade) from sc y group by sno having y.sno=x.sno);
+create view maxgrade_student(sno,maxgrade) as
+    select sno,max(grade) from sc group by sno;
+drop view maxgrade_student;
+select sc.sno,cno from sc,maxgrade_student where sc.sno=maxgrade_student.sno and  sc.grade=maxgrade_student.maxgrade;
+create user 'root1'@'localhost' identified by '8787521';
+grant select on table student to 'root1'@'localhost';
+grant all privileges on test to 'root1'@'localhost';
+revoke select on table student  from 'root1'@'localhost';
+grant all privileges on table student to 'root1'@'localhost';
+grant select  on table sc to 'root1'@'localhost';
+grant select on table student to public;
+revoke all privileges on test from 'root1'@'localhost';
+create user 'root2'@'localhost' identified by '8787521';
+flush  privileges;
+
+
+

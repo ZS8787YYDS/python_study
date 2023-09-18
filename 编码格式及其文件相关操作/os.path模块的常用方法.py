@@ -1,0 +1,27 @@
+print(1)
+'''os.path模块操作目录的相关函数：
+abspath(path):获取文件或者目录的绝对路径
+exists（path）:判断文件或者目录是否存在，存在返回True,否则返回False
+join（path，name）：将目录与目录或者文件名拼接起来
+splitext():分离文件名和扩展名
+basename（path）：从一个目录路径中提取文件名
+dirname(path):从一个目录路径中提取文件路径，不包括文件名
+isdir(path):判断是否为路径
+'''
+import os.path
+'''abspath():获取文件与目录的绝对路径：'''
+print(os.path.abspath('zs.txt'))#获取文件的绝对路径
+'''exists()判断文件或者目录是否存在，存在返回True，否则返回False'''
+print(os.path.exists('zs.txt'),os.path.exists('zz.txt'))#判断文件或者目录是否存在
+'''将目录路径与目录名或者文件名拼接起来：'''
+print(os.path.join('C:\\Users\\lenovo\\Desktop\\python项目1\\编码格式及其文件相关操作','zs8787.txt'))
+'''split()函数分离路径与文件名,返回值是一个元组'''
+print(os.path.split('C:\\Users\\lenovo\\Desktop\\python项目1\\编码格式及其文件相关操作\\zs.txt'))
+'''splitxt()函数将文件名和扩展名分离开,返回值是一个元组，参数是一个文件名'''
+print(os.path.splitext('zs.txt'))
+'''basename()函数从一个文件路径中提取文件名'''
+print(os.path.basename('C:\\Users\\lenovo\\Desktop\\python项目1\\编码格式及其文件相关操作\\zs.txt'))
+'''dirname()函数从一个文件路径中提取路径名'''
+print(os.path.dirname('C:\\Users\\lenovo\\Desktop\\python项目1\\编码格式及其文件相关操作\\zs.txt'))
+'''isdir()函数判断是否为路径：'''
+print(os.path.isdir('C:\\Users\\lenovo\\Desktop\\python项目1\\编码格式及其文件相关操作'))
